@@ -1,46 +1,94 @@
-import { useEffect, useState } from "react";
-import io from "socket.io-client";
+import React from 'react';
+import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom';
+import { AuthProvider } from './contexts/AuthContext';
+import { ChatProvider } from './contexts/ChatContext';
+import { ThemeProvider } from './contexts/ThemeContext';
+import Login from './pages/Login';
+import Register from './pages/Register';
+import Chat from './pages/Chat';
+import Profile from './pages/Profile';
+import NotFound from './pages/NotFound';
+import { useAuth } from './contexts/AuthContext';
+import "./index.css";
 
-const socket = io("http://localhost:5000");
+const PrivateRoute = ({ children }) => {
+  const { user, loading } = useAuth();
 
-function App() {
-  const [message, setMessage] = useState("");
-  const [chat, setChat] = useState([]);
+  if (loading) {
+    return (
+      <div className="h-screen w-screen flex items-center justify-center bg-gray-900">
+        <div className="animate-spin rounded-full h-8 w-8 border-t-2 border-b-2 border-blue-500"></div>
+      </div>
+    );
+  }
 
-  useEffect(() => {
-    socket.on("chat message", (msg) => {
-      setChat((prev) => [...prev, msg]);
-    });
-  }, []);
+  return user ? children : <Navigate to="/login" />;
+};
 
-  const sendMessage = (e) => {
-    e.preventDefault();
-    socket.emit("chat message", message);
-    setMessage("");
-  };
+const PublicRoute = ({ children }) => {
+  const { user, loading } = useAuth();
 
+  if (loading) {
+    return (
+      <div className="h-screen w-screen flex items-center justify-center bg-gray-900">
+        <div className="animate-spin rounded-full h-8 w-8 border-t-2 border-b-2 border-blue-500"></div>
+      </div>
+    );
+  }
+
+  return user ? <Navigate to="/" /> : children;
+};
+
+const App = () => {
   return (
-    <div className="p-6 max-w-md mx-auto bg-white rounded shadow mt-10">
-      <h1 className="text-2xl font-bold mb-4">Vite Chat App</h1>
-      <form onSubmit={sendMessage} className="flex gap-2 mb-4">
-        <input
-          className="border p-2 flex-1 rounded"
-          type="text"
-          value={message}
-          onChange={(e) => setMessage(e.target.value)}
-          placeholder="Type your message"
-        />
-        <button className="bg-blue-500 text-white px-4 rounded" type="submit">
-          Send
-        </button>
-      </form>
-      <ul className="space-y-2">
-        {chat.map((msg, i) => (
-          <li key={i} className="bg-gray-100 p-2 rounded">{msg}</li>
-        ))}
-      </ul>
+    <div className="h-full flex flex-col">
+      <ThemeProvider>
+        <AuthProvider>
+          <Router>
+            <Routes>
+              <Route
+                path="/login"
+                element={
+                  <PublicRoute>
+                    <Login />
+                  </PublicRoute>
+                }
+              />
+              <Route
+                path="/register"
+                element={
+                  <PublicRoute>
+                    <Register />
+                  </PublicRoute>
+                }
+              />
+              <Route
+                path="/"
+                element={
+                  <PrivateRoute>
+                    <ChatProvider>
+                      <div className="flex-1 flex overflow-hidden">
+                        <Chat />
+                      </div>
+                    </ChatProvider>
+                  </PrivateRoute>
+                }
+              />
+              <Route
+                path="/profile"
+                element={
+                  <PrivateRoute>
+                    <Profile />
+                  </PrivateRoute>
+                }
+              />
+              <Route path="*" element={<NotFound />} />
+            </Routes>
+          </Router>
+        </AuthProvider>
+      </ThemeProvider>
     </div>
   );
-}
+};
 
 export default App;
