@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 # Chatify - Real-time Chat Application
 
 A modern real-time chat application built with React, Node.js, and Socket.IO.
@@ -104,3 +105,42 @@ chat-app/
 ## License
 
 This project is licensed under the MIT License. 
+=======
+# 💬 Real-Time Chat App
+
+A full-stack real-time chat application built with **Vite + React + Tailwind CSS** on the frontend, and **Node.js + Express + Socket.IO** on the backend.
+
+---
+
+## ⚙️ Tech Stack
+
+**Frontend**
+- React (via Vite)
+- Tailwind CSS
+- Socket.IO Client
+
+**Backend**
+- Node.js
+- Express.js
+- Socket.IO Server
+
+---
+
+## 📁 Project Structure
+chat-app/ 
+   ├── client/ # Frontend (Vite + React + Tailwind) 
+   └── server/ # Backend (Node.js + Express + Socket.IO)
+
+
+---
+
+## 🚀 Features
+
+- Real-time messaging using WebSockets
+- Simple and responsive UI with Tailwind
+- Cross-browser compatible
+- Easily extendable to include auth, room chat, etc.
+
+---
+
+>>>>>>> 9046c2aa6092ccf3ccf07fb91be8f52c38cd9903
